@@ -29,7 +29,7 @@ func SetupServer() *echo.Echo {
 	}
 
 	// Database Setup
-	err = db.SetupDB("tmp/waypoint.db")
+	err = db.SetupDB("db/waypoint.db")
 	if err != nil {
 		log.Fatalf("Error creating db: %v\n", err)
 	}
