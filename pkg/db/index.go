@@ -22,17 +22,28 @@ var Db *DB
 
 // Executes an .sql file from the project_root/db/sql directory.
 // Takes the name of the file (without the file extension) as input.
-func (db *DB) ExecuteSQL(filename string) error {
+func (db *DB) ExecuteSQL(filename string) (sql.Result, error) {
 	path := path.Join(db_dir, sql_dir, filename+".sql")
 
 	out, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	sql := string(out)
 
-	_, err = db.db.Exec(sql)
-	return err
+	return db.db.Exec(sql)
+}
+
+func (db *DB) QuerySQL(filename string) (*sql.Rows, error) {
+	path := path.Join(db_dir, sql_dir, filename+".sql")
+
+	out, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	sql := string(out)
+
+	return db.db.Query(sql)
 }
 
 func SetupDB(url string) error {
@@ -58,14 +69,14 @@ func SetupDB(url string) error {
 }
 
 func seedData() error {
-	err := Db.ExecuteSQL("WaypointDBCreation")
+	_, err := Db.ExecuteSQL("WaypointDBCreation")
 	if err != nil {
 		return err
 	}
 
 	utils.Log("DB: Initialized Schema!")
 
-	err = Db.ExecuteSQL("SampleData")
+	_, err = Db.ExecuteSQL("SampleData")
 	if err != nil {
 		return err
 	}
