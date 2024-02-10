@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Users</title>
+        <title>Cookie Test</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="css/style.css" rel="stylesheet">
     </head>
     <body>
         <a href="/">Home</a>
 
-        <ul>
-            {{range $q := .}}
-            <li>{{$q.Name}}</li>
-            {{end}}
-        </ul>
+        <h1>Cookie</h1>
+
+        <p>{{.}}</p>
+
+        <a href="/get-cookie">Get a cookie</a>
     </body>
 </html>

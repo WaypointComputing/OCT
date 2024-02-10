@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Get Cookie</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <a href="/">Home</a>
+
+        <h1>Enter your cookie value:</h1>
+        <form hx-post="/submit-cookie" hx-swap="outerHTML">
+            <input type="text" name="cookie-val">
+            <button type="submit">Submit</button>
+        </form>
+
+        <a href="/cookie">See your cookie</a>
+    </body>
+</html>

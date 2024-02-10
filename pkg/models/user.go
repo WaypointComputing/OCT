@@ -12,6 +12,21 @@ type User struct {
 	Privileges int
 }
 
+func Login(email string, pwd string) (*User, error) {
+	users, err := GetUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, user := range *users {
+		if user.Email == email && user.PwdHash == pwd {
+			return &user, nil
+		}
+	}
+
+	return nil, nil
+}
+
 func GetUsers() (*[]User, error) {
 	rows, err := db.Db.QuerySQL("GetUsers")
 	if err != nil {

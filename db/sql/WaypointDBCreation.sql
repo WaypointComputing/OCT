@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS response (
 CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(32) NOT NULL,
-    email VARCHAR(32) NOT NULL,
+    email VARCHAR(32) NOT NULL UNIQUE,
     pwd_hash VARCHAR(128) NOT NULL,
     privileges INTEGER DEFAULT 1 NOT NULL,
     CONSTRAINT CHK_Privileges CHECK (privileges > 0 AND privileges <= 3)
