@@ -47,9 +47,9 @@ func (db *DB) QuerySQL(filename string) (*sql.Rows, error) {
 }
 
 func SetupDB(url string) error {
-	var dbExisted bool = false
+	var dbExisted bool = true
 	if _, err := os.Stat(url); errors.Is(err, os.ErrNotExist) {
-		dbExisted = true
+		dbExisted = false
 	}
 
 	db, err := sql.Open("libsql", "file:"+url)
@@ -61,7 +61,7 @@ func SetupDB(url string) error {
 		db,
 	}
 
-	if dbExisted {
+	if !dbExisted {
 		seedData()
 	}
 
