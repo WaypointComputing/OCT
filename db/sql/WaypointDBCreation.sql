@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS trait;
 DROP TABLE IF EXISTS quiz;
 
 DROP TABLE IF EXISTS blog;
+DROP TABLE IF EXISTS user_session;
 
 DROP TABLE IF EXISTS user;
 
@@ -58,11 +59,18 @@ CREATE TABLE IF NOT EXISTS user (
     CONSTRAINT CHK_Privileges CHECK (privileges > 0 AND privileges <= 3)
 );
 
+create table if not exists user_session (
+    session_key VARCHAR(128) PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    expiration TEXT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user(id)
+);
+
 CREATE TABLE IF NOT EXISTS blog (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     author_id INTEGER NOT NULL,
     title VARCHAR(32) NOT NULL,
     tagline VARCHAR(128) NULL DEFAULT NULL,
     blog_filepath VARCHAR(32) NOT NULL,
-    FOREIGN KEY(author_id) REFERENCES USER(id)
+    FOREIGN KEY(author_id) REFERENCES user(id)
 );

@@ -14,15 +14,11 @@ import (
 const db_dir string = "db"
 const sql_dir string = "sql"
 
-type DB struct {
-	db *sql.DB
-}
-
-var Db *DB
+var Db *sql.DB
 
 // Executes an .sql file from the project_root/db/sql directory.
 // Takes the name of the file (without the file extension) as input.
-func (db *DB) ExecuteSQL(filename string) (sql.Result, error) {
+func ExecuteSQL(filename string) (sql.Result, error) {
 	path := path.Join(db_dir, sql_dir, filename+".sql")
 
 	out, err := os.ReadFile(path)
@@ -31,10 +27,10 @@ func (db *DB) ExecuteSQL(filename string) (sql.Result, error) {
 	}
 	sql := string(out)
 
-	return db.db.Exec(sql)
+	return Db.Exec(sql)
 }
 
-func (db *DB) QuerySQL(filename string) (*sql.Rows, error) {
+func QuerySQL(filename string) (*sql.Rows, error) {
 	path := path.Join(db_dir, sql_dir, filename+".sql")
 
 	out, err := os.ReadFile(path)
@@ -43,7 +39,7 @@ func (db *DB) QuerySQL(filename string) (*sql.Rows, error) {
 	}
 	sql := string(out)
 
-	return db.db.Query(sql)
+	return Db.Query(sql)
 }
 
 func SetupDB(url string) error {
@@ -57,9 +53,7 @@ func SetupDB(url string) error {
 		return err
 	}
 
-	Db = &DB{
-		db,
-	}
+	Db = db
 
 	if !dbExisted {
 		seedData()
@@ -69,14 +63,14 @@ func SetupDB(url string) error {
 }
 
 func seedData() error {
-	_, err := Db.ExecuteSQL("WaypointDBCreation")
+	_, err := ExecuteSQL("WaypointDBCreation")
 	if err != nil {
 		return err
 	}
 
 	utils.Log("DB: Initialized Schema!")
 
-	_, err = Db.ExecuteSQL("SampleData")
+	_, err = ExecuteSQL("SampleData")
 	if err != nil {
 		return err
 	}
