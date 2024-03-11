@@ -39,21 +39,9 @@ func createUser(c echo.Context) error {
 		return err
 	}
 
-	authCookie, err := user.CreateSessionCookie(newUser)
-	if err != nil {
-		return err
-	}
-	if authCookie == nil {
-		return c.String(http.StatusOK, "JSDLKFJLKSDJFLSDJKLFJSLDJFLSDKFJSD")
-	}
-
-	utils.Log(fmt.Sprintf("%v | %v | %v", authCookie.Name, authCookie.Value, authCookie.Expires))
-
-	c.SetCookie(authCookie)
-
 	return c.HTML(
 		http.StatusOK,
-		"<div>Logged in as "+newUser.Name+"</div><div><a href='/'>Home</a></div>",
+		"<p>User '"+newUser.Name+"' created!</p><a href='/'>Home</a>",
 	)
 }
 
