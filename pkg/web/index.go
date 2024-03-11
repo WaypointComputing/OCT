@@ -6,6 +6,7 @@ import (
 	"log"
 	"path"
 	"waypoint/pkg/db"
+	"waypoint/pkg/web/routes"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -51,7 +52,7 @@ func SetupServer() *echo.Echo {
 	e.Static("/img", "public/img")
 
 	// Routing
-	IndexRoutes(e)
+	routes.Routing(e)
 
 	return e
 }

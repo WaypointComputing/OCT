@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Waypoint</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="/css/tailwind.css" rel="stylesheet">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {{ template "_head.html" . }}
+        <title>On Campus Toolkit</title>
     </head>
     <body>
-        <h1 class="text-3xl font-bold underline">Hello world!</h1>
-        <h3 class="text-xl text-red-500">How's it going?</h3>
+        {{ template "_header.html" . }}
+        <main class="">
+            {{ template "_hero.html" . }}
+            {{ template "_options.html" . }}
 
-        <a href="/login" class="text-blue-500">Login</a>
-        <br>
-        <a href="/cookie" class="text-blue-500">Cookie Test</a>
+        </main>
+        {{ template "_footer.html" . }}
     </body>
 </html>

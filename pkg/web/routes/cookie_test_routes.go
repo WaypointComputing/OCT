@@ -1,4 +1,4 @@
-package web
+package routes
 
 import (
 	"fmt"
@@ -11,12 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func IndexRoutes(e *echo.Echo) {
-	e.GET("/", index)
-	e.GET("/login", loginPage)
-	e.POST("/login", login)
-	e.GET("/hash", hashTest)
-
+func cookieRoutes(e *echo.Echo) {
 	authOnly := e.Group("", mw.Auth)
 	authOnly.GET("/users", getUsers)
 	authOnly.GET("/cookie", cookieTest)
@@ -33,54 +28,6 @@ func getUsers(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "users.html", users)
-}
-
-func index(c echo.Context) error {
-	utils.Log("HANDLER - index")
-
-	return c.Render(http.StatusOK, "index.html", nil)
-}
-
-func loginPage(c echo.Context) error {
-	utils.Log("HANDLER - loginPage")
-
-	return c.Render(http.StatusOK, "login.html", nil)
-}
-
-func login(c echo.Context) error {
-	utils.Log("HANDLER - login")
-
-	email := c.FormValue("email")
-	pwd := c.FormValue("pwd")
-	pwd = user.HashString(pwd)
-
-	loggedUser, err, status := user.Login(email, pwd)
-
-	switch status {
-	case user.ErrorOccurred:
-		if err != nil {
-			return err
-		}
-		break
-	case user.IncorrectUsernameAndPassword:
-		return c.String(http.StatusUnauthorized, "Incorrect username and password")
-	case user.IncorrectPassword:
-		return c.String(http.StatusUnauthorized, "Incorrect password")
-	case user.CorrectUsernameAndPassword:
-		break
-	}
-
-	authCookie, err := user.CreateSessionCookie(loggedUser)
-	if err != nil {
-		return err
-	}
-
-	c.SetCookie(authCookie)
-
-	return c.HTML(
-		http.StatusOK,
-		"<div>Logged in as "+loggedUser.Name+"</div><div><a href='/'>Home</a></div>",
-	)
 }
 
 func getCookie(c echo.Context) error {
@@ -124,11 +71,4 @@ func cookieTest(c echo.Context) error {
 	)
 
 	return c.Render(http.StatusOK, "cookie_test.html", message)
-}
-
-func hashTest(c echo.Context) error {
-	input := "password123"
-	hash := user.HashString(input)
-
-	return c.String(http.StatusOK, hash)
 }

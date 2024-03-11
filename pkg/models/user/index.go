@@ -126,7 +126,7 @@ func CreateSessionCookie(user *User) (*http.Cookie, error) {
 	hash := fmt.Sprintf("%v%v", currentTime, user.Email)
 	hash = HashString(hash)
 
-	expiration := time.Now().Add(time.Minute)
+	expiration := time.Now().Add(time.Hour * 2)
 
 	_, err := db.Db.Exec(
 		"INSERT INTO user_session VALUES (?, ?, ?)",
