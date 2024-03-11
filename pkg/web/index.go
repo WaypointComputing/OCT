@@ -3,8 +3,10 @@ package web
 import (
 	"html/template"
 	"io"
+	"io/fs"
 	"log"
-	"path"
+	"path/filepath"
+	"strings"
 	"waypoint/pkg/db"
 	"waypoint/pkg/web/routes"
 
@@ -22,15 +24,33 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 	return t.template.ExecuteTemplate(w, name, data)
 }
 
-func SetupServer() *echo.Echo {
-	// Template Parsing
-	templates, err := template.ParseGlob(path.Join(template_files, "*.html"))
+func parseTemplates(base_path string) *template.Template {
+	templates := template.New("")
+	err := filepath.Walk(base_path, func(path string, info fs.FileInfo, err error) error {
+		if strings.Contains(path, ".html") {
+			_, err = templates.ParseFiles(path)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+
+		return err
+	})
+
 	if err != nil {
 		log.Fatalf("Error loading templates: %v\n", err)
 	}
 
+	return templates
+}
+
+func SetupServer() *echo.Echo {
+	// Template Parsing
+
+	templates := parseTemplates(template_files)
+
 	// Database Setup
-	err = db.SetupDB("db/waypoint.db")
+	err := db.SetupDB("db/waypoint.db")
 	if err != nil {
 		log.Fatalf("Error creating db: %v\n", err)
 	}

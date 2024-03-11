@@ -18,6 +18,12 @@ type User struct {
 }
 
 const (
+	PrivilegeLevelUser    int = 1
+	PrivilegeLevelCreator int = 2
+	PrivilegeLevelAdmin   int = 3
+)
+
+const (
 	ErrorOccurred                int = 0
 	IncorrectUsernameAndPassword int = 1
 	IncorrectPassword            int = 2
@@ -40,6 +46,31 @@ func Login(email string, pwd string) (*User, error, int) {
 	}
 
 	return user, nil, CorrectUsernameAndPassword
+}
+
+func CreateUser(name string, email string, pwdHash string) (*User, error) {
+	result, err := db.Db.Exec(
+		"INSERT INTO user (name, email, pwd_hash) VALUES (?, ?, ?)",
+		name,
+		email,
+		pwdHash,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{
+		Id:         int(id),
+		Name:       name,
+		Email:      email,
+		PwdHash:    pwdHash,
+		Privileges: 1,
+	}, nil
 }
 
 func GetUsers() (*[]User, error) {

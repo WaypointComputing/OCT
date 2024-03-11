@@ -12,6 +12,7 @@ func Routing(e *echo.Echo) {
 
 	loginRoutes(e)
 	cookieRoutes(e)
+	userRoutes(e)
 }
 
 func index(c echo.Context) error {

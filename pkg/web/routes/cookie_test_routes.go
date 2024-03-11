@@ -13,21 +13,9 @@ import (
 
 func cookieRoutes(e *echo.Echo) {
 	authOnly := e.Group("", mw.Auth)
-	authOnly.GET("/users", getUsers)
 	authOnly.GET("/cookie", cookieTest)
 	authOnly.GET("/get-cookie", getCookie)
 	authOnly.POST("/submit-cookie", submitCookie)
-}
-
-func getUsers(c echo.Context) error {
-	utils.Log("HANDLER - getUsers")
-
-	users, err := user.GetUsers()
-	if err != nil {
-		return fmt.Errorf("Error: %w", err)
-	}
-
-	return c.Render(http.StatusOK, "users.html", users)
 }
 
 func getCookie(c echo.Context) error {
