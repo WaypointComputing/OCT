@@ -1,6 +1,7 @@
 package user
 
 import (
+	"database/sql"
 	"waypoint/pkg/db"
 )
 
@@ -76,23 +77,9 @@ func GetUsers() (*[]User, error) {
 	users := []User{}
 
 	for rows.Next() {
-		var id int64
-		var name string
-		var email string
-		var pwdHash string
-		var privileges int
-
-		err = rows.Scan(&id, &name, &email, &pwdHash, &privileges)
+		user, err := scanUser(rows)
 		if err != nil {
 			return nil, err
-		}
-
-		user := User{
-			id,
-			name,
-			email,
-			pwdHash,
-			privileges,
 		}
 
 		users = append(users, user)
@@ -103,37 +90,27 @@ func GetUsers() (*[]User, error) {
 
 func GetUser(id int64) (User, error) {
 	var u User
-	row := db.Db.QueryRow("SELECT * FROM user WHERE id = ?", id)
-	err := row.Scan(&u.Id, &u.Name, &u.Email, &u.PwdHash, &u.Privileges)
-	return u, err
+	row, err := db.QueryRowSQL("GetUser", id)
+	if err != nil {
+		return u, err
+	}
+	return u, row.Scan(&u.Id, &u.Name, &u.Email, &u.PwdHash, &u.Privileges)
 }
 
 func GetUserByEmail(email string) (*User, error) {
-	rows, err := db.Db.Query("SELECT * FROM user WHERE email = ?", email)
+	rows, err := db.QuerySQL("GetUserByEmail", email)
 	if err != nil {
 		return nil, err
 	}
 
 	users := []User{} // Should only be length 0 or 1
 	for rows.Next() {
-		var id int64
-		var name string
-		var userEmail string
-		var pwdHash string
-		var privileges int
-
-		err := rows.Scan(&id, &name, &userEmail, &pwdHash, &privileges)
+		user, err := scanUser(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		users = append(users, User{
-			Id:         id,
-			Name:       name,
-			Email:      userEmail,
-			PwdHash:    pwdHash,
-			Privileges: privileges,
-		})
+		users = append(users, user)
 	}
 
 	if len(users) == 0 {
@@ -141,4 +118,18 @@ func GetUserByEmail(email string) (*User, error) {
 	}
 
 	return &users[0], nil
+}
+
+func scanUser(rows *sql.Rows) (User, error) {
+	var user User
+
+	err := rows.Scan(
+		&user.Id,
+		&user.Name,
+		&user.Email,
+		&user.PwdHash,
+		&user.Privileges,
+	)
+
+	return user, err
 }

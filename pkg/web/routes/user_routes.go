@@ -22,7 +22,7 @@ func userRoutes(e *echo.Echo) {
 	authOnly.Use(auth.JWTMw())
 	authOnly.Use(auth.AuthMw())
 
-	authOnly.GET("/get", getUsers)
+	authOnly.GET("", getUsers)
 	authOnly.GET("/get/:id", getUser)
 }
 

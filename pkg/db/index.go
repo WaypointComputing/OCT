@@ -18,28 +18,34 @@ var Db *sql.DB
 
 // Executes an .sql file from the project_root/db/sql directory.
 // Takes the name of the file (without the file extension) as input.
-func ExecuteSQL(filename string) (sql.Result, error) {
-	path := path.Join(db_dir, sql_dir, filename+".sql")
-
-	out, err := os.ReadFile(path)
+func ExecuteSQL(filename string, args ...interface{}) (sql.Result, error) {
+	sql, err := readSQLFile(filename)
 	if err != nil {
 		return nil, err
 	}
-	sql := string(out)
-
-	return Db.Exec(sql)
+	return Db.Exec(sql, args...)
 }
 
-func QuerySQL(filename string) (*sql.Rows, error) {
-	path := path.Join(db_dir, sql_dir, filename+".sql")
-
-	out, err := os.ReadFile(path)
+func QuerySQL(filename string, args ...interface{}) (*sql.Rows, error) {
+	sql, err := readSQLFile(filename)
 	if err != nil {
 		return nil, err
 	}
-	sql := string(out)
+	return Db.Query(sql, args...)
+}
 
-	return Db.Query(sql)
+func QueryRowSQL(filename string, args ...interface{}) (*sql.Row, error) {
+	sql, err := readSQLFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	return Db.QueryRow(sql, args...), nil
+}
+
+func readSQLFile(filename string) (string, error) {
+	path := path.Join(db_dir, sql_dir, filename+".sql")
+	out, err := os.ReadFile(path)
+	return string(out), err
 }
 
 func SetupDB(url string) error {

@@ -3,10 +3,7 @@ DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS trait;
 DROP TABLE IF EXISTS quiz;
-
 DROP TABLE IF EXISTS blog;
-DROP TABLE IF EXISTS user_session;
-
 DROP TABLE IF EXISTS user;
 
 CREATE TABLE IF NOT EXISTS quiz (
@@ -57,13 +54,6 @@ CREATE TABLE IF NOT EXISTS user (
     pwd_hash VARCHAR(128) NOT NULL,
     privileges INTEGER DEFAULT 1 NOT NULL,
     CONSTRAINT CHK_Privileges CHECK (privileges > 0 AND privileges <= 3)
-);
-
-create table if not exists user_session (
-    session_key VARCHAR(128) PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    expiration TEXT NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES user(id)
 );
 
 CREATE TABLE IF NOT EXISTS blog (
