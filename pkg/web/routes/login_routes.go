@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"waypoint/pkg/auth"
 	"waypoint/pkg/models/user"
 	"waypoint/pkg/utils"
 
@@ -14,7 +15,7 @@ type LoginResponse struct {
 }
 
 func loginRoutes(e *echo.Echo) {
-	e.GET("/login", loginPage)
+	e.GET("/login", loginPage).Name = "loginPage"
 	e.POST("/login", login)
 }
 
@@ -29,7 +30,7 @@ func login(c echo.Context) error {
 
 	email := c.FormValue("email")
 	pwd := c.FormValue("pwd")
-	pwd = user.HashString(pwd)
+	pwd = auth.HashString(pwd)
 
 	loggedUser, err, status := user.Login(email, pwd)
 
@@ -47,12 +48,10 @@ func login(c echo.Context) error {
 		break
 	}
 
-	authCookie, err := user.CreateSessionCookie(loggedUser)
+	err = auth.SetJWTCookie(loggedUser, c)
 	if err != nil {
 		return err
 	}
-
-	c.SetCookie(authCookie)
 
 	return c.HTML(
 		http.StatusOK,

@@ -4,18 +4,21 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	"waypoint/pkg/auth"
 	"waypoint/pkg/models/user"
 	"waypoint/pkg/utils"
-	"waypoint/pkg/web/mw"
 
 	"github.com/labstack/echo/v4"
 )
 
 func cookieRoutes(e *echo.Echo) {
-	authOnly := e.Group("", mw.Auth)
-	authOnly.GET("/cookie", cookieTest)
-	authOnly.GET("/get-cookie", getCookie)
-	authOnly.POST("/submit-cookie", submitCookie)
+	authOnly := e.Group("/cookie")
+	authOnly.Use(auth.JWTMw())
+	authOnly.Use(auth.AuthMw())
+
+	authOnly.GET("", cookieTest)
+	authOnly.GET("/get", getCookie)
+	authOnly.POST("/get", submitCookie)
 }
 
 func getCookie(c echo.Context) error {
